@@ -50,22 +50,26 @@ defmodule MixFreebsdPkg.Config do
     name = mix_config[:app] |> to_string()
     templates_dir = Path.join(["priv", "freebsd_pkg"])
 
-    validate_config(mix_config[:description], "description", "description: \"Example Package\"")
+    ensure_value_is_not_nil(
+      "description",
+      mix_config[:description],
+      "description: \"Example Package\""
+    )
 
-    validate_config(
-      mix_config[:homepage_url],
+    ensure_value_is_not_nil(
       "homepage_url",
+      mix_config[:homepage_url],
       "homepage_url: \"https://example.com\""
     )
 
-    validate_config(
-      mix_config[:mix_freebsd_pkg][:maintainer],
+    ensure_value_is_not_nil(
       "mix_freebsd_pkg[:maintainer]",
+      mix_config[:mix_freebsd_pkg][:maintainer],
       "mix_freebsd_pkg: [\n\tmaintainer: \"maintainer@example.com\"\n\t]"
     )
 
     pre_install_template =
-      ensure_template_exists(
+      MixFreebsdPkg.Templates.ensure_template_exists(
         templates_dir,
         "pre_install.sh",
         mix_config[:mix_freebsd_pkg][:pre_install],
@@ -73,7 +77,7 @@ defmodule MixFreebsdPkg.Config do
       )
 
     post_install_template =
-      ensure_template_exists(
+      MixFreebsdPkg.Templates.ensure_template_exists(
         templates_dir,
         "post_install.sh",
         mix_config[:mix_freebsd_pkg][:post_install],
@@ -81,7 +85,7 @@ defmodule MixFreebsdPkg.Config do
       )
 
     pre_deinstall_template =
-      ensure_template_exists(
+      MixFreebsdPkg.Templates.ensure_template_exists(
         templates_dir,
         "pre_deinstall.sh",
         mix_config[:mix_freebsd_pkg][:pre_deinstall],
@@ -89,7 +93,7 @@ defmodule MixFreebsdPkg.Config do
       )
 
     post_deinstall_template =
-      ensure_template_exists(
+      MixFreebsdPkg.Templates.ensure_template_exists(
         templates_dir,
         "post_deinstall.sh",
         mix_config[:mix_freebsd_pkg][:post_deinstall],
@@ -97,7 +101,7 @@ defmodule MixFreebsdPkg.Config do
       )
 
     rc_template =
-      ensure_template_exists(
+      MixFreebsdPkg.Templates.ensure_template_exists(
         templates_dir,
         "#{name}.sh",
         mix_config[:mix_freebsd_pkg][:rc_template],
@@ -117,7 +121,7 @@ defmodule MixFreebsdPkg.Config do
       else
         mix_config[:mix_freebsd_pkg][:conf_files]
         |> Enum.map(fn file ->
-          ensure_template_exists(
+          MixFreebsdPkg.Templates.ensure_template_exists(
             templates_dir,
             file,
             file,
@@ -180,48 +184,7 @@ defmodule MixFreebsdPkg.Config do
     end
   end
 
-  def ensure_template_exists(
-        templates_dir,
-        template_name,
-        config_template_path,
-        pkg_template_path
-      ) do
-    if config_template_path != nil do
-      if File.exists?(config_template_path) do
-        config_template_path
-      else
-        raise """
-        Template file not found: #{config_template_path}
-        """
-      end
-    else
-      app_template = Path.join([templates_dir, template_name])
-
-      if File.exists?(app_template) do
-        app_template
-      else
-        lib_dir = Application.app_dir(@app, ["priv", "templates"])
-        lib_template = Path.join([lib_dir, template_name])
-
-        if File.exists?(lib_template) do
-          File.mkdir_p!(templates_dir)
-          File.cp!(lib_template, app_template)
-          app_template
-        else
-          if pkg_template_path != nil and File.exists?(pkg_template_path) do
-            File.mkdir_p!(templates_dir)
-            File.cp!(pkg_template_path, app_template)
-          else
-            raise """
-            Template file not found: #{app_template}
-            """
-          end
-        end
-      end
-    end
-  end
-
-  def validate_config(value, key, suggestion) do
+  def ensure_value_is_not_nil(key,value, suggestion) do
     if value == nil do
       raise """
       Please set #{key} under mix.exs project configuration.
