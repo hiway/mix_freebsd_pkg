@@ -68,29 +68,61 @@ defmodule MixFreebsdPkg do
       ensure_template_exists(
         templates_dir,
         "pre_install.sh",
-        mix_config[:mix_freebsd_pkg][:pre_install]
+        mix_config[:mix_freebsd_pkg][:pre_install],
+        nil
       )
 
     post_install_template =
       ensure_template_exists(
         templates_dir,
         "post_install.sh",
-        mix_config[:mix_freebsd_pkg][:post_install]
+        mix_config[:mix_freebsd_pkg][:post_install],
+        nil
       )
 
     pre_deinstall_template =
       ensure_template_exists(
         templates_dir,
         "pre_deinstall.sh",
-        mix_config[:mix_freebsd_pkg][:pre_deinstall]
+        mix_config[:mix_freebsd_pkg][:pre_deinstall],
+        nil
       )
 
     post_deinstall_template =
       ensure_template_exists(
         templates_dir,
         "post_deinstall.sh",
-        mix_config[:mix_freebsd_pkg][:post_deinstall]
+        mix_config[:mix_freebsd_pkg][:post_deinstall],
+        nil
       )
+
+    rc_template =
+      ensure_template_exists(
+        templates_dir,
+        "#{name}.sh",
+        mix_config[:mix_freebsd_pkg][:rc_template],
+        Path.join(Application.app_dir(@app, ["priv", "templates"]), "service.sh")
+      )
+
+    conf_file_template =
+      if mix_config[:mix_freebsd_pkg][:conf_files] == nil do
+        File.mkdir_p!(templates_dir)
+
+        File.cp!(
+          Path.join(Application.app_dir(@app, ["priv", "templates"]), "config.env"),
+          Path.join(templates_dir, "#{name}.env")
+        )
+      else
+        mix_config[:mix_freebsd_pkg][:conf_files]
+        |> Enum.map(fn file ->
+          ensure_template_exists(
+            templates_dir,
+            "#{name}.conf",
+            file,
+            nil
+          )
+        end)
+      end
 
     defaults = [
       name: name,
@@ -119,12 +151,12 @@ defmodule MixFreebsdPkg do
       ],
       conf_dir: Path.join(["/usr/local/etc", name]),
       conf_files: [
-        "#{name}.env.sample"
+        conf_file_template
       ],
       port_acl_tcp: [],
       port_acl_udp: [],
       rc_script: Path.join(["/usr/local/etc/rc.d", name]),
-      rc_template: Path.join([templates_dir, "zycelium.sh"]),
+      rc_template: rc_template,
       rc_extra_commands: [
         init: Path.join([templates_dir, "init.sh"])
       ],
@@ -132,7 +164,7 @@ defmodule MixFreebsdPkg do
       post_install: post_install_template,
       pre_deinstall: pre_deinstall_template,
       post_deinstall: post_deinstall_template,
-      pkg_file: "#{name}-#{mix_config[:version]}.pkg",
+      pkg_file: "#{name}-#{mix_config[:version]}-#{MixFreebsdPkg.Platform.arch()}.pkg",
       freebsd_version: MixFreebsdPkg.Platform.freebsd_version(),
       arch: MixFreebsdPkg.Platform.arch()
     ]
@@ -146,9 +178,13 @@ defmodule MixFreebsdPkg do
     end
   end
 
-  def ensure_template_exists(templates_dir, template_name, config_template_path) do
+  def ensure_template_exists(
+        templates_dir,
+        template_name,
+        config_template_path,
+        pkg_template_path
+      ) do
     if config_template_path != nil do
-
       if File.exists?(config_template_path) do
         config_template_path
       else
@@ -170,9 +206,14 @@ defmodule MixFreebsdPkg do
           File.cp!(lib_template, app_template)
           app_template
         else
-          raise """
-          Template file not found: #{app_template}
-          """
+          if pkg_template_path != nil and File.exists?(pkg_template_path) do
+            File.mkdir_p!(templates_dir)
+            File.cp!(pkg_template_path, app_template)
+          else
+            raise """
+            Template file not found: #{app_template}
+            """
+          end
         end
       end
     end
