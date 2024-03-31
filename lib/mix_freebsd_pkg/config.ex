@@ -1,4 +1,4 @@
-defmodule MixFreebsdPkg do
+defmodule MixFreebsdPkg.Config do
   @moduledoc """
   Documentation for `MixFreebsdPkg`.
   """
