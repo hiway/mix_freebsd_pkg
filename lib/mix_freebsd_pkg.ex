@@ -2,6 +2,8 @@ defmodule MixFreebsdPkg do
   @moduledoc """
   Documentation for `MixFreebsdPkg`.
   """
+  @app :mix_freebsd_pkg
+
   @spec merge_config_with_argv(OptionParser.argv()) :: Keyword.t()
   def merge_config_with_argv(argv) do
     options = [
@@ -34,7 +36,7 @@ defmodule MixFreebsdPkg do
         post_install: :string,
         pre_deinstall: :string,
         post_deinstall: :string,
-        pkg_file: :string,
+        pkg_file: :string
       ]
     ]
 
@@ -61,6 +63,34 @@ defmodule MixFreebsdPkg do
       "mix_freebsd_pkg[:maintainer]",
       "mix_freebsd_pkg: [\n\tmaintainer: \"maintainer@example.com\"\n\t]"
     )
+
+    pre_install_template =
+      ensure_template_exists(
+        templates_dir,
+        "pre_install.sh",
+        mix_config[:mix_freebsd_pkg][:pre_install]
+      )
+
+    post_install_template =
+      ensure_template_exists(
+        templates_dir,
+        "post_install.sh",
+        mix_config[:mix_freebsd_pkg][:post_install]
+      )
+
+    pre_deinstall_template =
+      ensure_template_exists(
+        templates_dir,
+        "pre_deinstall.sh",
+        mix_config[:mix_freebsd_pkg][:pre_deinstall]
+      )
+
+    post_deinstall_template =
+      ensure_template_exists(
+        templates_dir,
+        "post_deinstall.sh",
+        mix_config[:mix_freebsd_pkg][:post_deinstall]
+      )
 
     defaults = [
       name: name,
@@ -98,10 +128,10 @@ defmodule MixFreebsdPkg do
       rc_extra_commands: [
         init: Path.join([templates_dir, "init.sh"])
       ],
-      pre_install: Path.join([templates_dir, "pre_install.sh"]),
-      post_install: Path.join([templates_dir, "post_install.sh"]),
-      pre_deinstall: Path.join([templates_dir, "pre_deinstall.sh"]),
-      post_deinstall: Path.join([templates_dir, "post_deinstall.sh"]),
+      pre_install: pre_install_template,
+      post_install: post_install_template,
+      pre_deinstall: pre_deinstall_template,
+      post_deinstall: post_deinstall_template,
       pkg_file: "#{name}-#{mix_config[:version]}.pkg",
       freebsd_version: freebsd_version(),
       arch: arch()
@@ -113,6 +143,38 @@ defmodule MixFreebsdPkg do
       config |> Keyword.merge(pkg_file: "#{overrides[:pkg_file]}.pkg")
     else
       config
+    end
+  end
+
+  def ensure_template_exists(templates_dir, template_name, config_template_path) do
+    if config_template_path != nil do
+
+      if File.exists?(config_template_path) do
+        config_template_path
+      else
+        raise """
+        Template file not found: #{config_template_path}
+        """
+      end
+    else
+      app_template = Path.join([templates_dir, template_name])
+
+      if File.exists?(app_template) do
+        app_template
+      else
+        lib_dir = Application.app_dir(@app, ["priv", "templates"])
+        lib_template = Path.join([lib_dir, template_name])
+
+        if File.exists?(lib_template) do
+          File.mkdir_p!(templates_dir)
+          File.cp!(lib_template, app_template)
+          app_template
+        else
+          raise """
+          Template file not found: #{app_template}
+          """
+        end
+      end
     end
   end
 
