@@ -4,7 +4,40 @@ defmodule MixFreebsdPkg do
   """
   @spec merge_config_with_argv(OptionParser.argv()) :: Keyword.t()
   def merge_config_with_argv(argv) do
-    options = [strict: [pkg_file: :string]]
+    options = [
+      strict: [
+        name: :string,
+        version: :string,
+        description: :string,
+        homepage_url: :string,
+        maintainer: :string,
+        comment: :string,
+        # requires: :list,
+        user: :string,
+        user_id: :integer,
+        group: :string,
+        group_id: :integer,
+        # groups: :list,
+        app_dir: :string,
+        data_dir: :string,
+        run_dir: :string,
+        log_dir: :string,
+        # log_files: :list,
+        conf_dir: :string,
+        # conf_files: :list,
+        # port_acl_tcp: :list,
+        # port_acl_udp: :list,
+        rc_script: :string,
+        rc_template: :string,
+        # rc_extra_commands: :list,
+        pre_install: :string,
+        post_install: :string,
+        pre_deinstall: :string,
+        post_deinstall: :string,
+        pkg_file: :string,
+      ]
+    ]
+
     {overrides, _} = OptionParser.parse!(argv, options)
     mix_config = Mix.Project.config()
     create_config(mix_config, overrides)
@@ -16,11 +49,13 @@ defmodule MixFreebsdPkg do
     templates_dir = Path.join(["priv", "freebsd_pkg"])
 
     validate_config(mix_config[:description], "description", "description: \"Example Package\"")
+
     validate_config(
       mix_config[:homepage_url],
       "homepage_url",
       "homepage_url: \"https://example.com\""
     )
+
     validate_config(
       mix_config[:mix_freebsd_pkg][:maintainer],
       "mix_freebsd_pkg[:maintainer]",
