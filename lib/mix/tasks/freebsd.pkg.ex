@@ -15,7 +15,7 @@ defmodule Mix.Tasks.Freebsd.Pkg do
 
       conf_files = conf_files
       |> Enum.map(fn conf_file ->
-        conf_file_content = MixFreebsdPkg.ConfFile.render(config, conf_file)
+        conf_file_content = MixFreebsdPkg.Templates.ConfFile.render(config, conf_file)
         %{name: conf_file |> Path.basename(), content: conf_file_content}
       end)
 
