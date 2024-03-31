@@ -1,9 +1,9 @@
 defmodule MixFreebsdPkgTest do
   use ExUnit.Case
-  doctest MixFreebsdPkg
+  doctest MixFreebsdPkg.Config
 
   test "config defaults" do
-    config = MixFreebsdPkg.merge_config_with_argv([])
+    config = MixFreebsdPkg.Config.config([])
     assert config[:name] == "mix_freebsd_pkg"
     assert config[:version] != nil
     assert config[:description] == "Example FreeBSD Package"
@@ -31,7 +31,7 @@ defmodule MixFreebsdPkgTest do
     assert config[:port_acl_tcp] == []
     assert config[:port_acl_udp] == []
     assert config[:rc_script] == "/usr/local/etc/rc.d/mix_freebsd_pkg"
-    assert config[:rc_template] == "priv/freebsd_pkg/zycelium.sh"
+    assert config[:rc_template] == "priv/freebsd_pkg/mix_freebsd_pkg.sh"
     assert config[:rc_extra_commands] == [init: "priv/freebsd_pkg/init.sh"]
 
     assert config[:pre_install] == "priv/freebsd_pkg/pre_install.sh"
@@ -39,18 +39,18 @@ defmodule MixFreebsdPkgTest do
     assert config[:pre_deinstall] == "priv/freebsd_pkg/pre_deinstall.sh"
     assert config[:post_deinstall] == "priv/freebsd_pkg/post_deinstall.sh"
 
-    assert config[:pkg_file] == "mix_freebsd_pkg-#{config[:version]}.pkg"
+    assert config[:pkg_file] == "mix_freebsd_pkg-#{config[:version]}-#{config[:arch]}.pkg"
     assert config[:freebsd_version] != nil
     assert config[:arch] != nil
   end
 
   test "override pkg_file with extension" do
-    config = MixFreebsdPkg.merge_config_with_argv(["--pkg-file", "my-pkg-file.pkg"])
+    config = MixFreebsdPkg.Config.config(["--pkg-file", "my-pkg-file.pkg"])
     assert config[:pkg_file] == "my-pkg-file.pkg"
   end
 
   test "override pkg_file without extension" do
-    config = MixFreebsdPkg.merge_config_with_argv(["--pkg-file", "my-pkg-file"])
+    config = MixFreebsdPkg.Config.config(["--pkg-file", "my-pkg-file"])
     assert config[:pkg_file] == "my-pkg-file.pkg"
   end
 end
