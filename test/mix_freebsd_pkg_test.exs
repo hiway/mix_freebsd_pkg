@@ -3,7 +3,7 @@ defmodule MixFreebsdPkgTest do
   doctest MixFreebsdPkg
 
   test "config defaults" do
-    config = Mix.Tasks.Freebsd.parse_args([])
+    config = MixFreebsdPkg.merge_config_with_argv([])
     assert config[:name] == "mix_freebsd_pkg"
     assert config[:version] != nil
     assert config[:description] == "Example FreeBSD Package"
@@ -45,12 +45,12 @@ defmodule MixFreebsdPkgTest do
   end
 
   test "override pkg_file with extension" do
-    config = Mix.Tasks.Freebsd.parse_args(["--pkg-file", "my-pkg-file.pkg"])
+    config = MixFreebsdPkg.merge_config_with_argv(["--pkg-file", "my-pkg-file.pkg"])
     assert config[:pkg_file] == "my-pkg-file.pkg"
   end
 
   test "override pkg_file without extension" do
-    config = Mix.Tasks.Freebsd.parse_args(["--pkg-file", "my-pkg-file"])
+    config = MixFreebsdPkg.merge_config_with_argv(["--pkg-file", "my-pkg-file"])
     assert config[:pkg_file] == "my-pkg-file.pkg"
   end
 end

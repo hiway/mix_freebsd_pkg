@@ -3,9 +3,9 @@ defmodule Mix.Tasks.Freebsd.Pkg do
 
   @impl Mix.Task
   @spec run(OptionParser.argv()) :: nil
-  def run(args) do
-    if Mix.Tasks.Freebsd.freebsd?() do
-      config = Mix.Tasks.Freebsd.parse_args(args)
+  def run(argv) do
+    if MixFreebsdPkg.freebsd?() do
+      config = MixFreebsdPkg.merge_config_with_argv(argv)
       IO.inspect(config)
     else
       IO.puts("Please run this task on FreeBSD.")
