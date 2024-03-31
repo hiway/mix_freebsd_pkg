@@ -4,7 +4,7 @@ defmodule Mix.Tasks.Freebsd.Pkg do
   @impl Mix.Task
   @spec run(OptionParser.argv()) :: nil
   def run(argv) do
-    if MixFreebsdPkg.freebsd?() do
+    if MixFreebsdPkg.Platform.freebsd?() do
       config = MixFreebsdPkg.merge_config_with_argv(argv)
       IO.inspect(config)
     else

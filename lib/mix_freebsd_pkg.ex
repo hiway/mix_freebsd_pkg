@@ -133,8 +133,8 @@ defmodule MixFreebsdPkg do
       pre_deinstall: pre_deinstall_template,
       post_deinstall: post_deinstall_template,
       pkg_file: "#{name}-#{mix_config[:version]}.pkg",
-      freebsd_version: freebsd_version(),
-      arch: arch()
+      freebsd_version: MixFreebsdPkg.Platform.freebsd_version(),
+      arch: MixFreebsdPkg.Platform.arch()
     ]
 
     config = defaults |> Keyword.merge(mix_config[:mix_freebsd_pkg]) |> Keyword.merge(overrides)
@@ -193,19 +193,5 @@ defmodule MixFreebsdPkg do
 
       """
     end
-  end
-
-  def freebsd? do
-    System.find_executable("freebsd-version") != nil
-  end
-
-  def freebsd_version do
-    {output, _} = System.cmd("freebsd-version", [])
-    output |> String.trim()
-  end
-
-  def arch do
-    {output, _} = System.cmd("uname", ["-m"])
-    output |> String.trim()
   end
 end
