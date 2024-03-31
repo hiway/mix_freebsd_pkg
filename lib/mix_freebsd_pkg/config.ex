@@ -176,7 +176,10 @@ defmodule MixFreebsdPkg.Config do
     ]
 
     config = defaults |> Keyword.merge(mix_config[:mix_freebsd_pkg]) |> Keyword.merge(overrides)
+    config |> ensure_pkg_file_has_extension(overrides)
+  end
 
+  def ensure_pkg_file_has_extension(config, overrides) do
     if overrides[:pkg_file] != nil and !String.ends_with?(overrides[:pkg_file], [".pkg"]) do
       config |> Keyword.merge(pkg_file: "#{overrides[:pkg_file]}.pkg")
     else
