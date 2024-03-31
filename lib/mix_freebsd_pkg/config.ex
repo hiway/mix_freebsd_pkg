@@ -42,11 +42,11 @@ defmodule MixFreebsdPkg.Config do
 
     {overrides, _} = OptionParser.parse!(argv, options)
     mix_config = Mix.Project.config()
-    create_config(mix_config, overrides)
+    merge_config(mix_config, overrides)
   end
 
-  @spec create_config(Keyword.t(), Keyword.t()) :: Keyword.t()
-  defp create_config(mix_config, overrides) do
+  @spec merge_config(Keyword.t(), Keyword.t()) :: Keyword.t()
+  defp merge_config(mix_config, overrides) do
     name = mix_config[:app] |> to_string()
     templates_dir = Path.join(["priv", "freebsd_pkg"])
 
