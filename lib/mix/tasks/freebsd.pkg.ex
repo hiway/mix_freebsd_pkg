@@ -8,7 +8,7 @@ defmodule Mix.Tasks.Freebsd.Pkg do
       config = MixFreebsdPkg.Config.config(argv)
       # IO.inspect(config)
 
-      service_rc = MixFreebsdPkg.Service.default_rc(config)
+      service_rc = MixFreebsdPkg.Templates.Service.default_rc(config)
       IO.puts("\nService rc file: \n\n#{service_rc}\n")
 
       conf_files = config[:conf_files]
