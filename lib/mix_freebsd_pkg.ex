@@ -117,7 +117,7 @@ defmodule MixFreebsdPkg do
         |> Enum.map(fn file ->
           ensure_template_exists(
             templates_dir,
-            "#{name}.conf",
+            file,
             file,
             nil
           )
