@@ -45,8 +45,12 @@ defmodule MixFreebsdPkg.Templates do
 end
 
 defmodule MixFreebsdPkg.Templates.ConfFile do
-  def render(config, template) do
-    template |> EEx.eval_file(assigns: %{config: config})
+  def render(config) do
+    config[:conf_files]
+      |> Enum.map(fn conf_file ->
+        conf_file_content = conf_file |> EEx.eval_file(assigns: %{config: config})
+        %{name: conf_file |> Path.basename(), content: conf_file_content}
+      end)
   end
 end
 
