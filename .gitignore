@@ -24,3 +24,6 @@ mix_freebsd_pkg-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# Generated templates
+priv/freebsd_pkg/
