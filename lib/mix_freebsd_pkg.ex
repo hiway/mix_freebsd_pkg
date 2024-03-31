@@ -15,51 +15,17 @@ defmodule MixFreebsdPkg do
     name = mix_config[:app] |> to_string()
     templates_dir = Path.join(["priv", "freebsd_pkg"])
 
-    if mix_config[:description] == nil do
-      raise """
-      Please set description under mix.exs project configuration.
-
-      def project do
-        [
-          ...
-          description: "Example Package",
-          ...
-        ]
-      end
-
-      """
-    end
-
-    if mix_config[:homepage_url] == nil do
-      raise """
-      Please set homepage_url under mix.exs project configuration.
-
-      def project do
-        [
-          ...
-          homepage_url: "https://example.com",
-          ...
-        ]
-      end
-
-      """
-    end
-
-    if mix_config[:mix_freebsd_pkg][:maintainer] == nil do
-      raise """
-      Please set maintainer under mix_freebsd_pkg in mix.exs project configuration.
-
-      def project do
-        [
-          ...
-          mix_freebsd_pkg: [
-            maintainer: "name@example.com",
-          ]
-        ]
-      end
-
-      """
-    end
+    validate_config(mix_config[:description], "description", "description: \"Example Package\"")
+    validate_config(
+      mix_config[:homepage_url],
+      "homepage_url",
+      "homepage_url: \"https://example.com\""
+    )
+    validate_config(
+      mix_config[:mix_freebsd_pkg][:maintainer],
+      "mix_freebsd_pkg[:maintainer]",
+      "mix_freebsd_pkg: [\n\tmaintainer: \"maintainer@example.com\"\n\t]"
+    )
 
     defaults = [
       name: name,
@@ -112,6 +78,23 @@ defmodule MixFreebsdPkg do
       config |> Keyword.merge(pkg_file: "#{overrides[:pkg_file]}.pkg")
     else
       config
+    end
+  end
+
+  def validate_config(value, key, suggestion) do
+    if value == nil do
+      raise """
+      Please set #{key} under mix.exs project configuration.
+
+      def project do
+        [
+          ...
+          #{suggestion}
+          ...
+        ]
+      end
+
+      """
     end
   end
 
