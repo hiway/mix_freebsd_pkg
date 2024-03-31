@@ -65,7 +65,7 @@ defmodule MixFreebsdPkg.Config do
     ensure_value_is_not_nil(
       "mix_freebsd_pkg[:maintainer]",
       mix_config[:mix_freebsd_pkg][:maintainer],
-      "mix_freebsd_pkg: [\n\tmaintainer: \"maintainer@example.com\"\n\t]"
+      "mix_freebsd_pkg: [maintainer: \"#{maintainer_email()}\"]"
     )
 
     pre_install_template =
@@ -179,6 +179,14 @@ defmodule MixFreebsdPkg.Config do
     config |> ensure_pkg_file_has_extension(overrides)
   end
 
+  @spec maintainer_email() :: binary()
+  def maintainer_email() do
+    case System.cmd("git", ["config", "--get", "user.email"]) do
+      {email, 0} -> email |> String.trim()
+      _ -> "maintainer@example.com"
+    end
+  end
+
   def ensure_pkg_file_has_extension(config, overrides) do
     if overrides[:pkg_file] != nil and !String.ends_with?(overrides[:pkg_file], [".pkg"]) do
       config |> Keyword.merge(pkg_file: "#{overrides[:pkg_file]}.pkg")
@@ -187,7 +195,7 @@ defmodule MixFreebsdPkg.Config do
     end
   end
 
-  def ensure_value_is_not_nil(key,value, suggestion) do
+  def ensure_value_is_not_nil(key, value, suggestion) do
     if value == nil do
       raise """
       Please set #{key} under mix.exs project configuration.
