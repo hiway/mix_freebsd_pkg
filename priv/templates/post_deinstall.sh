@@ -1,3 +1,3 @@
 #!/bin/sh
 
-echo "Pre-Deinstall Script"
+echo "Post-Deinstall Script for <%= @config[:name] %>"

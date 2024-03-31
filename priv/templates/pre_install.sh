@@ -1,3 +1,3 @@
 #!/bin/sh
 
-echo "Pre-Install Script"
+echo "Pre-Install Script for <%= @config[:name] %>"

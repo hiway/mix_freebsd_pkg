@@ -61,3 +61,11 @@ defmodule MixFreebsdPkg.Templates.Service do
     rc_template |> EEx.eval_file(assigns: %{config: config})
   end
 end
+
+defmodule MixFreebsdPkg.Templates.InstallScript do
+  @spec render(MixFreebsdPkg.Config.t(), String.t()) :: String.t()
+  def render(config, install_script_name) do
+    Mix.shell().info("Rendering install script: #{install_script_name}")
+    install_script_name |> EEx.eval_file(assigns: %{config: config})
+  end
+end

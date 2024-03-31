@@ -1,3 +1,3 @@
 #!/bin/sh
 
-echo "Post-Install Script"
+echo "Post-Install Script for <%= @config[:name] %>"
