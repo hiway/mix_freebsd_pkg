@@ -4,8 +4,8 @@ defmodule MixFreebsdPkg do
   """
   @app :mix_freebsd_pkg
 
-  @spec merge_config_with_argv(OptionParser.argv()) :: Keyword.t()
-  def merge_config_with_argv(argv) do
+  @spec config(OptionParser.argv()) :: Keyword.t()
+  def config(argv) do
     options = [
       strict: [
         name: :string,
