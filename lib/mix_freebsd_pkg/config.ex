@@ -110,8 +110,10 @@ defmodule MixFreebsdPkg.Config do
 
         File.cp!(
           Path.join(Application.app_dir(@app, ["priv", "templates"]), "config.env"),
-          Path.join(templates_dir, "#{name}.env")
+          Path.join(templates_dir, "#{name}.env.sample")
         )
+
+        "#{name}.env.sample"
       else
         mix_config[:mix_freebsd_pkg][:conf_files]
         |> Enum.map(fn file ->
