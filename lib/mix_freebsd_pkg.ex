@@ -35,7 +35,7 @@ defmodule MixFreebsdPkg do
       maintainer: mix_config[:mix_freebsd_pkg][:maintainer],
       comment: mix_config[:mix_freebsd_pkg][:comment] || mix_config[:description],
       # https://docs.freebsd.org/en/books/porters-handbook/book/#porting-categories
-      category: mix_config[:mix_freebsd_pkg][:category] || "www",
+      category: "www",
       # https://docs.freebsd.org/en/books/porters-handbook/book/#porting-prefix
       prefix: "/usr/local",
       requires: [],
