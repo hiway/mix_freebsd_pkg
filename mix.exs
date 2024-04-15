@@ -7,12 +7,7 @@ defmodule MixFreebsdPkg.MixProject do
       version: "0.0.1",
       elixir: "~> 1.16",
       start_permanent: Mix.env() == :prod,
-      deps: deps(),
-      description: "Example FreeBSD Package",
-      homepage_url: "https://example.com",
-      mix_freebsd_pkg: [
-        maintainer: "harshad@sharma.io",
-      ]
+      deps: deps()
     ]
   end
 
