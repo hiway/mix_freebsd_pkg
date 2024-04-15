@@ -5,6 +5,10 @@ defmodule Mix.Tasks.Freebsd.Pkg do
   use Mix.Task
 
   def run(_) do
-    Mix.shell().info("Hello from freebsd.pkg!")
+    if MixFreebsdPkg.Platform.freebsd?() do
+      Mix.shell().info("Hello from freebsd.pkg!")
+    else
+      Mix.shell().error("This task is only available on FreeBSD.")
+    end
   end
 end
