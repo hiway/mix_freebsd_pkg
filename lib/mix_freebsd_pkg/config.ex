@@ -51,6 +51,10 @@ defmodule MixFreebsdPkg.Config do
       homepage_url: mix_config[:homepage_url],
       maintainer: mix_config[:maintainer],
       category: pkg_config[:category] || "misc",
+      user: pkg_config[:user] || name,
+      group: pkg_config[:group] || name,
+      deps: mix_config[:deps] || [],
+      service_commands: pkg_config[:service_commands] || [],
 
       # Paths for installation
       prefix: prefix,
