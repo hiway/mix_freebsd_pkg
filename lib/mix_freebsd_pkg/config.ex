@@ -8,15 +8,16 @@ defmodule MixFreebsdPkg.Config do
 
   @spec config() :: map
   def config() do
-    # arch = Platform.arch()
-    # freebsd_version = Platform.freebsd_version()
-    # freebsd_version_short = Platform.freebsd_version_short()
+    arch = Platform.arch()
+    freebsd_version = Platform.freebsd_version()
+    freebsd_version_short = Platform.freebsd_version_short()
 
     mix_config = Mix.Project.config()
     pkg_config = mix_config[:freebsd_pkg] || %{}
 
     name = mix_config[:app] |> to_string()
     version = mix_config[:version]
+    service_commands = pkg_config[:service_commands] || []
 
     prefix = "/usr/local"
     app_dir = Path.join([prefix, "libexec", name])
@@ -45,6 +46,7 @@ defmodule MixFreebsdPkg.Config do
       |> Path.relative_to(File.cwd!())
 
     config = %{
+      # Package metadata
       name: name,
       version: version,
       description: mix_config[:description],
@@ -53,8 +55,13 @@ defmodule MixFreebsdPkg.Config do
       category: pkg_config[:category] || "misc",
       user: pkg_config[:user] || name,
       group: pkg_config[:group] || name,
-      deps: mix_config[:deps] || [],
-      service_commands: pkg_config[:service_commands] || [],
+      deps: pkg_config[:deps] || [],
+      service_commands: service_commands,
+
+      # Platform / OS
+      arch: arch,
+      freebsd_version: freebsd_version,
+      freebsd_version_short: freebsd_version_short,
 
       # Paths for installation
       prefix: prefix,
@@ -67,6 +74,7 @@ defmodule MixFreebsdPkg.Config do
       env_file: Path.join([conf_dir, "#{name}.env"]),
       conf_file: Path.join([conf_dir, "#{name}.conf"]),
       service_file: Path.join([service_dir, name]),
+      service_command_files: service_commands |> Enum.map(&{&1, Path.join([app_dir, "#{&1}.sh"])}),
 
       # Build directories
       build_dir: build_dir,
@@ -84,12 +92,16 @@ defmodule MixFreebsdPkg.Config do
       stage_env_file: Path.join([stage_conf_dir, "#{name}.env"]),
       stage_conf_file: Path.join([stage_conf_dir, "#{name}.conf"]),
       stage_service_file: Path.join([stage_service_dir, name]),
+      stage_service_command_files:
+        service_commands |> Enum.map(&{&1, Path.join([stage_app_dir, "#{&1}.sh"])}),
 
       # Project templates
       template_dir: template_dir,
       env_template: Path.join(["#{name}.env.sample"]),
       conf_template: Path.join(["#{name}.conf.sample"]),
       service_template: Path.join([template_dir, "service.sh.eex"]),
+      service_command_templates:
+        service_commands |> Enum.map(&{&1, Path.join([template_dir, "service_#{&1}.sh.eex"])}),
       pre_install_template: Path.join([template_dir, "pre-install.sh.eex"]),
       post_install_template: Path.join([template_dir, "post-install.sh.eex"]),
       pre_deinstall_template: Path.join([template_dir, "pre-deinstall.sh.eex"]),
@@ -100,10 +112,12 @@ defmodule MixFreebsdPkg.Config do
       lib_env_template: Path.join([lib_template_dir, "config.env.sample.eex"]),
       lib_conf_template: Path.join([lib_template_dir, "config.conf.sample.eex"]),
       lib_service_template: Path.join([lib_template_dir, "service.sh.eex"]),
+      lib_service_command_templates:
+        service_commands |> Enum.map((&{&1, Path.join([lib_template_dir, "service_#{&1}.sh.eex"])})),
       lib_pre_install_template: Path.join([lib_template_dir, "pre-install.sh.eex"]),
       lib_post_install_template: Path.join([lib_template_dir, "post-install.sh.eex"]),
       lib_pre_deinstall_template: Path.join([lib_template_dir, "pre-deinstall.sh.eex"]),
-      lib_post_deinstall_template: Path.join([lib_template_dir, "post-deinstall.sh.eex"]),
+      lib_post_deinstall_template: Path.join([lib_template_dir, "post-deinstall.sh.eex"])
     }
 
     case MixFreebsdPkg.Config.Pipeline.call(config) do
