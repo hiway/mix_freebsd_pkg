@@ -59,7 +59,7 @@ Install FreeBSD package:
 ### Package name
 
   * Modify `project()` in `mix.exs` to add `freebsd_pkg: []` 
-  * Add `pkg_name` with template as shown below or `<%= @name %>-latest`
+  * Add `pkg_name` with template as shown below or `<%= @name %>-latest.pkg`
 
 ```elixir
 # mix.exs
