@@ -4,7 +4,7 @@ defmodule MixFreebsdPkg.Config do
   values from various sources populated and validated.
   """
 
-  # alias MixFreebsdPkg.Platform
+  alias MixFreebsdPkg.Platform
 
   @spec config() :: map
   def config() do
