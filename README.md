@@ -19,7 +19,7 @@ end
 
 ## Configuration
 
-Add required metadata to `confix.exs`:
+Add required metadata to `mix.exs`:
 
   * Under `project()`, add these fields:
 
