@@ -55,6 +55,7 @@ Install FreeBSD package:
 
 ## Customise
 
+
 ### Package name
 
   * Modify `project()` in `mix.exs` to add `freebsd_pkg: []` 
@@ -68,12 +69,13 @@ Install FreeBSD package:
       app: :example,
       ...
       freebsd_pkg: [
-        # Explicit build env: "app_name-0.1.0-amd64-14.0-rel-p6.pkg"
+        # Add build env to name: "app_name-0.1.0-amd64-14.0-rel-p6.pkg"
         rename_pkg: "<%= @app_name %>-<%= @app_version %>-<%= @arch %><%= @freebsd_version %>.pkg"
       ]
     ]
   end
 ```
+
 
 ### Package dependencies
 
@@ -89,7 +91,7 @@ Install FreeBSD package:
       ...
       freebsd_pkg: [
         deps: [
-          {"sqlite3", version: "3.45.1,1"}
+          {origin: "databases/sqlite3", version: "3.45.1,1"}
         ]
       ]
     ]
@@ -97,17 +99,13 @@ Install FreeBSD package:
 ```
 
 
-### Service user/ groups
+### Service user
 
-By default the service is run as a unprivileged user created based on the app name.
+By default the service is run as an unprivileged user created based on the app name.
 
   * Modify `project()` in `mix.exs` to add `freebsd_pkg: []`
-  * Add `user` and/or `groups` under `freebsd_pkg`. 
-  * Group with the same name as user is automatically created if missing.
-  * The `groups` section specifies any extra groups the user must be a member.
-  * The extra groups must already exist on the system, think `www`, `operator`, `wheel` etc.
-  * You can omit `user` if default is fine and only specify `groups`.
-  * You can omit `groups` if not needed and only specify user name.
+  * Add `user` under `freebsd_pkg`
+  * Group with the same name as user is automatically created
 
 ```elixir
 # mix.exs
@@ -118,23 +116,51 @@ By default the service is run as a unprivileged user created based on the app na
       ...
       freebsd_pkg: [
         user: "example",
-        groups: ["www"]
       ]
     ]
   end
 ```
 
+
 ### Service commands
 
-You can use built-in extra commands available via the service cli on FreeBSD, or create your own.
+You can use built-in extra commands available via `service` on FreeBSD, or create your own.
 
-  * Run `mix freebsd.command list` to see available commands.
-  * Run `mix freebsd.command use` to use one of the available commands.
-  * Run `mix freebsd.command add` to create a custom service command.
+  * Run `mix freebsd.command list` to see available extra commands
 
 Available extra commands for service:
 
   * `init` - Generates secret_key_base and self-signed keys to enable https
+
+To use a built-in extra command:
+
+  * Run `mix freebsd.command use init` to create the template file at `priv/freebsd/service_init.sh.eex`
+  * Modify `project()` in `mix.exs` to add `freebsd_pkg: []`
+  * Add `service` under `freebsd_pkg`.
+  * Add `commands` under `service`
+
+```elixir
+# mix.exs
+
+  def project do
+    [
+      app: :example,
+      ...
+      freebsd_pkg: [
+        service: [
+          commands: ["init"]
+        ]
+      ]
+    ]
+  end
+```
+
+To create a custom extra command:
+
+  * Run `mix freebsd.command create <name>`
+
+Then add it to `freebsd_pkg[:service][:commands]` as above.
+
 
 ### Override service, *-install scripts and configuration
 
