@@ -59,7 +59,7 @@ Install FreeBSD package:
 ### Package name
 
   * Modify `project()` in `mix.exs` to add `freebsd_pkg: []` 
-  * Add `rename_pkg` with a template as shown below or `<%= @app_name %>-latest`
+  * Add `pkg_name` with template as shown below or `<%= @name %>-latest`
 
 ```elixir
 # mix.exs
@@ -70,7 +70,7 @@ Install FreeBSD package:
       ...
       freebsd_pkg: [
         # Add build env to name: "app_name-0.1.0-amd64-14.0-rel-p6.pkg"
-        rename_pkg: "<%= @app_name %>-<%= @app_version %>-<%= @arch %><%= @freebsd_version %>.pkg"
+        pkg_name: "<%= @name %>-<%= @version %>-<%= @arch %><%= @freebsd_version %>.pkg"
       ]
     ]
   end
@@ -122,7 +122,7 @@ By default the service is run as an unprivileged user created based on the app n
 ```
 
 
-### Service commands
+### Service extra-commands
 
 You can use built-in extra commands available via `service` on FreeBSD, or create your own.
 
