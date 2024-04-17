@@ -21,7 +21,8 @@ defmodule MixFreebsdPkg.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:opus, "~> 0.8"}
+      {:opus, "~> 0.8"},
+      {:jason, "~> 1.4"}
     ]
   end
 end
