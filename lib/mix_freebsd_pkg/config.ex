@@ -59,6 +59,8 @@ defmodule MixFreebsdPkg.Config do
       service_commands: service_commands,
       use_conf: pkg_config[:use_conf] || false,
       use_env: pkg_config[:use_env] || true,
+      package_name_default: "#{name}-#{version}.pkg",
+      package_name: pkg_config[:package_name] || "#{name}-#{version}.pkg",
 
       # Platform / OS
       arch: arch,
@@ -91,8 +93,8 @@ defmodule MixFreebsdPkg.Config do
       stage_data_dir: stage_data_dir,
       stage_log_dir: stage_log_dir,
       stage_run_dir: stage_run_dir,
-      stage_env_file: Path.join([stage_conf_dir, "#{name}.env"]),
-      stage_conf_file: Path.join([stage_conf_dir, "#{name}.conf"]),
+      stage_env_file: Path.join([stage_conf_dir, "#{name}.env.sample"]),
+      stage_conf_file: Path.join([stage_conf_dir, "#{name}.conf.sample"]),
       stage_service_file: Path.join([stage_service_dir, name]),
       stage_service_command_files:
         service_commands |> Enum.map(&{&1, Path.join([stage_app_dir, "#{&1}.sh"])}),
