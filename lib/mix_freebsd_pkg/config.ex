@@ -57,6 +57,8 @@ defmodule MixFreebsdPkg.Config do
       group: pkg_config[:group] || name,
       deps: pkg_config[:deps] || [],
       service_commands: service_commands,
+      use_conf: pkg_config[:use_conf] || false,
+      use_env: pkg_config[:use_env] || true,
 
       # Platform / OS
       arch: arch,
@@ -121,7 +123,7 @@ defmodule MixFreebsdPkg.Config do
     }
 
     case MixFreebsdPkg.Config.Pipeline.call(config) do
-      {:ok, result} -> result |> Enum.sort()
+      {:ok, result} -> result |> Enum.sort() |> Enum.into(%{})
       {:error, reason} -> Mix.shell().error("Failed to create package: #{inspect(reason.error)}")
     end
   end
