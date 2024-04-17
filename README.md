@@ -2,6 +2,12 @@
 
 Mix Task to create FreeBSD package from an Elixir / Phoenix project.
 
+> Status (17 Apr 2024): I'm currently implementing 
+  the functionality described in the readme below. 
+  Everything is in flux and you annot use this project to create packages just yet.
+  It should be ready in a few days as I work on it here and there between 
+  managing my small farm and a whole bunch of animals.
+
 
 ## Installation
 
