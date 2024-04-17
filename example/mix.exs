@@ -15,6 +15,7 @@ defmodule Example.MixProject do
       deps: deps(),
       freebsd_pkg: [
         service_commands: ["init", "reset"],
+        package_name: "<%= @name %>-<%= @version %>-<%= @arch %><%= @freebsd_version_short %>.pkg"
       ]
     ]
   end
