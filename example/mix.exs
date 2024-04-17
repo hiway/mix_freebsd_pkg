@@ -14,8 +14,7 @@ defmodule Example.MixProject do
       aliases: aliases(),
       deps: deps(),
       freebsd_pkg: [
-        use_conf: true,
-        service_commands: ["init", "reset"],
+        service_commands: ["init"],
         package_name: "<%= @name %>-<%= @version %>-<%= @arch %>-<%= @freebsd_version_short %>.pkg"
       ]
     ]
@@ -80,7 +79,8 @@ defmodule Example.MixProject do
         "tailwind example --minify",
         "esbuild example --minify",
         "phx.digest"
-      ]
+      ],
+      "package.freebsd": ["compile", "assets.deploy", "release --overwrite", "freebsd.pkg"]
     ]
   end
 end
