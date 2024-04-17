@@ -4,7 +4,7 @@ defmodule Mix.Tasks.Freebsd.Pkg do
   """
   use Mix.Task
   alias MixFreebsdPkg.Config
-  # alias MixFreebsdPkg.Pkg
+  alias MixFreebsdPkg.Pkg
   alias MixFreebsdPkg.Platform
   alias MixFreebsdPkg.Template
 
@@ -12,7 +12,8 @@ defmodule Mix.Tasks.Freebsd.Pkg do
     if Platform.freebsd?() do
       config = Config.config()
       templates = Template.render(config)
-      IO.inspect(templates)
+      pkg_file = Pkg.create(config, templates)
+      Mix.shell().info("Created #{inspect(pkg_file)}")
     else
       Mix.shell().error("This task is only available on FreeBSD.")
     end
