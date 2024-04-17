@@ -47,6 +47,20 @@ defmodule MixFreebsdPkg.Pkg do
     |> Path.wildcard()
     |> Stream.filter(&Enum.member?([:regular, :symlink], File.lstat!(&1).type))
     |> Stream.map(&String.replace(&1, "#{config.stage_dir}#{config.prefix}/", ""))
+    |> Stream.map(&add_plist_mode(&1, config))
+  end
+
+  defp add_plist_mode(path, config) do
+    if String.ends_with?(path, ".sh") do
+      "@(,,0755) #{path}"
+    else
+      case String.split(path, "/") do
+        ["etc", "rc.d" | _] -> "@(,,0755) #{path}"
+        ["etc" | _] -> "@sample(,,0644) #{path}"
+        ["libexec" | _] -> "@(#{config.user},#{config.group},) #{path}"
+        _ -> path
+      end
+    end
   end
 end
 
@@ -148,9 +162,9 @@ defmodule MixFreebsdPkg.Pkg.Pipeline do
     # TODO: Set ownership and permissions
     # https://docs.freebsd.org/en/books/porters-handbook/plist/#plist-cleaning
     extra__dirs = [
-      "@dir #{config.data_dir}",
-      "@dir #{config.log_dir}",
-      "@dir #{config.run_dir}"
+      "@dir(#{config.user},#{config.group},0755) #{config.data_dir}",
+      "@dir(#{config.user},#{config.group},0755) #{config.log_dir}",
+      "@dir(#{config.user},#{config.group},0755) #{config.run_dir}"
     ]
 
     File.write!(plist_file_path, extra__dirs |> Enum.join("\n"))

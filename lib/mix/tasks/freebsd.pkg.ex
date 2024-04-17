@@ -13,7 +13,7 @@ defmodule Mix.Tasks.Freebsd.Pkg do
       config = Config.config()
       templates = Template.render(config)
       pkg_file = Pkg.create(config, templates)
-      Mix.shell().info("Created #{inspect(pkg_file)}")
+      Mix.shell().info("Created: #{pkg_file}")
     else
       Mix.shell().error("This task is only available on FreeBSD.")
     end
