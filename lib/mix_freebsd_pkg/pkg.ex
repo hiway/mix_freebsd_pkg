@@ -38,7 +38,17 @@ defmodule MixFreebsdPkg.Pkg do
       }
     }
 
+    manifest = manifest |> deps(config.deps)
     Jason.encode!(manifest)
+  end
+
+  @spec deps(map, map) :: map
+  def deps(manifest, deps) do
+    if deps do
+      manifest |> Map.put(:deps, deps)
+    else
+      manifest
+    end
   end
 
   @spec release_files(map) :: Stream.t()

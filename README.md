@@ -76,7 +76,7 @@ Install FreeBSD package:
       ...
       freebsd_pkg: [
         # Add build env to name: "app_name-0.1.0-amd64-14.0-rel.pkg"
-        pkg_name: "<%= @name %>-<%= @version %>-<%= @arch %><%= @freebsd_version_short %>.pkg"
+        pkg_name: "<%= @name %>-<%= @version %>-<%= @arch %>-<%= @freebsd_version_short %>.pkg"
       ]
     ]
   end
@@ -96,9 +96,9 @@ Install FreeBSD package:
       app: :example,
       ...
       freebsd_pkg: [
-        deps: [
-          {origin: "databases/sqlite3", version: "3.45.1,1"}
-        ]
+        deps: %{
+          "sqlite3" => %{origin: "databases/sqlite3", version: "3.45.1,1"}
+        }
       ]
     ]
   end
