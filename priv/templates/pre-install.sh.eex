@@ -1,3 +1,24 @@
 #!/bin/sh
 
-echo "Pre-Install Script for <%= @name %>"
+ensure_user() {
+    group=$1
+    user=$1
+
+    if pw groupshow $group 2>/dev/null; then
+        echo "Group '$group' already exists."
+    else
+        echo "Creating group '$group'."
+        pw groupadd $group
+    fi
+
+    if id $user 2>/dev/null; then
+        echo "User '$user' already exists."
+    else
+        echo "Creating user '$user' with group '$group'."
+        pw useradd $user -g $group -s /usr/sbin/nologin -d /nonexistent
+    fi
+}
+
+<%= if @user != "root" do %>
+ensure_user "<%= @user %>" "<%= @user %>"
+<% end %>
