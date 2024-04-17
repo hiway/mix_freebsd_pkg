@@ -14,8 +14,9 @@ defmodule Example.MixProject do
       aliases: aliases(),
       deps: deps(),
       freebsd_pkg: [
+        use_conf: true,
         service_commands: ["init", "reset"],
-        package_name: "<%= @name %>-<%= @version %>-<%= @arch %><%= @freebsd_version_short %>.pkg"
+        package_name: "<%= @name %>-<%= @version %>-<%= @arch %>-<%= @freebsd_version_short %>.pkg"
       ]
     ]
   end
