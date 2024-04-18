@@ -66,7 +66,7 @@ Add an alias to build release and then a FreeBSD package:
 
 Create FreeBSD package:
 
-  * Run `mix package.freebsd`
+  * Run `env MIX_ENV=prod mix package.freebsd`
 
 
 ## Profit??
