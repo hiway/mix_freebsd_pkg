@@ -87,4 +87,11 @@ defmodule Example.MixProject do
       "package.freebsd": ["compile", "assets.deploy", "release --overwrite", "freebsd.pkg"]
     ]
   end
+
+  def cli do
+    [
+      default_task: "phx.server",
+      preferred_envs: ["package.freebsd": :prod]
+    ]
+  end
 end
