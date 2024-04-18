@@ -55,7 +55,7 @@ defmodule MixFreebsdPkg.Config do
       category: pkg_config[:category] || "misc",
       user: pkg_config[:user] || name,
       group: pkg_config[:group] || pkg_config[:user] || name,
-      deps: pkg_config[:deps] || [],
+      deps: pkg_config[:deps],
       service_commands: service_commands,
       use_conf: pkg_config[:use_conf] || false,
       use_env: pkg_config[:use_env] || true,
