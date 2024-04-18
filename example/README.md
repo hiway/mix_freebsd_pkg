@@ -15,13 +15,19 @@ Add `mix_freebsd_pkg` as dependency:
     for this example residing within the `mix_freebsd_pkg` repo.
     In your own project, you'll want to follow the instructions in README of `mix_freebsd_pkg`.
 
-Add required metadata to `confix.exs`:
-  * Under `project()`, add these two fields:
+Add required metadata to `mix.exs`:
+  * Under `project`, add these two fields:
     - `description: "Awesome FreeBSD App",`
     - `maintainer: "your.name@example.com",`
 
+Add an alias to build release and then a FreeBSD package:
+
+  * Under `aliases` in `mix.exs`, add this line:
+    - `"package.freebsd": ["compile", "assets.deploy", "release --overwrite", "freebsd.pkg"]`
+  * You can change `package.freebsd` to any memorable word.
+
 Create FreeBSD package:
-  * Run `mix freebsd.pkg`
+  * Run `mix package.freebsd`
 
 Install FreeBSD package:
   * Run `pkg install -U example-0.1.0.pkg`

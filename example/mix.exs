@@ -14,11 +14,12 @@ defmodule Example.MixProject do
       aliases: aliases(),
       deps: deps(),
       freebsd_pkg: [
-        service_commands: ["init"],
-        package_name: "<%= @name %>-<%= @version %>-<%= @arch %>-<%= @freebsd_version_short %>.pkg",
-        deps: %{
-          "sqlite3" => %{origin: "databases/sqlite3", version: "3.45.1,1"}
-        }
+        # use_conf: true,
+        # service_commands: ["init", "reset"],
+        # package_name: "<%= @name %>-<%= @version %>-<%= @arch %>-<%= @freebsd_version_short %>.pkg",
+        # deps: %{
+        #   "sqlite3" => %{origin: "databases/sqlite3", version: "3.45.1,1"}
+        # }
       ]
     ]
   end
