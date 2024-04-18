@@ -38,31 +38,35 @@ if config_env() == :prod do
 
   config :example, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
-  config :example, ExampleWeb.Endpoint,
-    url: [host: host, port: 443, scheme: "https"],
-    http: [
-      # Enable IPv6 and bind on all interfaces.
-      # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
-      # See the documentation on https://hexdocs.pm/bandit/Bandit.html#t:options/0
-      # for details about using IPv6 vs IPv4 and loopback vs public addresses.
-      ip: {0, 0, 0, 0, 0, 0, 0, 0},
-      port: port
-    ],
-    secret_key_base: secret_key_base
+  # config :example, ExampleWeb.Endpoint,
+  #   url: [host: host, port: 8080, scheme: "http"],
+  #   http: [
+  #     # Enable IPv6 and bind on all interfaces.
+  #     # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
+  #     # See the documentation on https://hexdocs.pm/bandit/Bandit.html#t:options/0
+  #     # for details about using IPv6 vs IPv4 and loopback vs public addresses.
+  #     ip: {0, 0, 0, 0, 0, 0, 0, 0},
+  #     port: port
+  #   ],
+  #   secret_key_base: secret_key_base
 
   # ## SSL Support
   #
   # To get SSL working, you will need to add the `https` key
   # to your endpoint configuration:
   #
-  #     config :example, ExampleWeb.Endpoint,
-  #       https: [
-  #         ...,
-  #         port: 443,
-  #         cipher_suite: :strong,
-  #         keyfile: System.get_env("SOME_APP_SSL_KEY_PATH"),
-  #         certfile: System.get_env("SOME_APP_SSL_CERT_PATH")
-  #       ]
+
+  config :example, ExampleWeb.Endpoint,
+    url: [host: host, port: port, scheme: "https"],
+    https: [
+      port: port,
+      ip: {0, 0, 0, 0},
+      cipher_suite: :strong,
+      keyfile: System.get_env("TLS_KEY_PATH"),
+      certfile: System.get_env("TLS_CERT_PATH")
+    ],
+    secret_key_base: secret_key_base
+
   #
   # The `cipher_suite` is set to `:strong` to support only the
   # latest and more secure SSL ciphers. This means old browsers
