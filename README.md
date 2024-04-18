@@ -161,6 +161,7 @@ By default the service is run as an unprivileged user created based on the app n
   * Modify `project` in `mix.exs` to add `freebsd_pkg: []`
   * Add `user` under `freebsd_pkg`
   * Group with the same name as user is automatically created
+  * Specify `group` if default behaviour is not suitable
 
 ```elixir
 # mix.exs
@@ -181,6 +182,8 @@ By default the service is run as an unprivileged user created based on the app n
 
 You can use built-in extra commands available via `service` on FreeBSD, or create your own.
 
+The commands can be run as `service <name> <command>`
+
 Available extra commands for service:
 
   * `init` - Generates secret_key_base and self-signed keys to enable https
@@ -191,7 +194,7 @@ To use a built-in extra command:
   * Add `service_commands` under `freebsd_pkg`.
   * Add `init` under `service_commands`
   * Run `mix freebsd.render service_commands`
-  * Creates the template file at `priv/freebsd/service_init.sh.eex`
+    * Creates the template file at `priv/freebsd/service_init.sh.eex`
 
 ```elixir
 # mix.exs
@@ -215,7 +218,7 @@ To create a custom extra command:
 
 ### Override service and *-install scripts
 
-Available templates for `mix freebsd.render <name>`:
+Available templates:
 
   * `service`
   * `pre-install`
@@ -223,8 +226,12 @@ Available templates for `mix freebsd.render <name>`:
   * `pre-deinstall`
   * `post-deinstall`
 
+Run `mix freebsd.render service` etc.
+
 Shortcut to render all above templates: `mix freebsd.render all`
 
+These files are automatically generated at the time of creating package 
+if you've not already rendered and customized them.
 
 ### More metadata
 
