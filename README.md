@@ -13,7 +13,7 @@ to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:mix_freebsd_pkg, "~> 0.1.0", runtime: Mix.env() == :dev}
+    {:mix_freebsd_pkg, github: "hiway/mix_freebsd_pkg", runtime: Mix.env() == :dev}
   ]
 end
 ```
