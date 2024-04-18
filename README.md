@@ -27,7 +27,7 @@ end
 
 Add required metadata to `mix.exs`:
 
-  * Under `project()`, add these fields:
+  * Under `project`, add these fields:
 
 ```elixir
 # mix.exs
@@ -44,12 +44,29 @@ Add required metadata to `mix.exs`:
   end
 ```
 
+Add an alias to build release and then a FreeBSD package:
+
+  * Under `aliases` in `mix.exs`, add this line:
+    - `"package.freebsd": ["compile", "assets.deploy", "release --overwrite", "freebsd.pkg"]`
+  * You can change `package.freebsd` to any memorable word.
+
+```elixir
+# mix.exs 
+
+  defp aliases do
+    [
+      ...
+      "package.freebsd": ["compile", "assets.deploy", "release --overwrite", "freebsd.pkg"]
+    ]
+  end
+
+```
 
 ## Usage
 
 Create FreeBSD package:
 
-  * Run `mix freebsd.pkg`
+  * Run `mix package.freebsd`
 
 
 ## Profit??
@@ -64,8 +81,8 @@ Install FreeBSD package:
 
 ### Package name
 
-  * Modify `project()` in `mix.exs` to add `freebsd_pkg: []` 
-  * Add `pkg_name` with template as shown below or `<%= @name %>-latest.pkg`
+  * Modify `project` in `mix.exs` to add `freebsd_pkg: []` 
+  * Add `pkg_name` with template as shown below or a simple `<%= @name %>-latest.pkg`
 
 ```elixir
 # mix.exs
@@ -75,7 +92,7 @@ Install FreeBSD package:
       app: :example,
       ...
       freebsd_pkg: [
-        # Add build env to name: "app_name-0.1.0-amd64-14.0-rel.pkg"
+        # "app_name-0.1.0-amd64-14.0-rel.pkg"
         pkg_name: "<%= @name %>-<%= @version %>-<%= @arch %>-<%= @freebsd_version_short %>.pkg"
       ]
     ]
@@ -85,7 +102,7 @@ Install FreeBSD package:
 
 ### Package dependencies
 
-  * Modify `project()` in `mix.exs` to add `freebsd_pkg: []` 
+  * Modify `project` in `mix.exs` to add `freebsd_pkg: []` 
   * Add dependencies under `freebsd_pkg[:deps]` 
 
 ```elixir
@@ -107,17 +124,18 @@ Install FreeBSD package:
 
 ### Configuration files
 
-  * Modify `project()` in `mix.exs` to add `freebsd_pkg: []` 
+  * Modify `project` in `mix.exs` to add `freebsd_pkg: []` 
   * Add `use_conf: true`
     * This will create a `<name>.conf.sample` file in project root dir
     * It is an EEx template that you can modify
-    * Run `mix freebsd.render_conf` to generate a `<name>.conf` file in project root dir
+    * Run `mix freebsd.render conf` to generate a `<name>.conf.sample` file in project root dir
     * The sample template will be installed at `/usr/local/etc/<name>.conf.sample`
       * It will be copied as `/usr/local/etc/<name>.conf`
       * Users can modify `/usr/local/etc/<name>.conf`
   * Another configuration file `<name>.env.sample` is automatically created 
-    and installed with defaults to enable a phoenix project to run without modifications.
+    and installed with defaults to enable a Phoenix project to run without modifications.
     * Add `use_env: false` to disable this behaviour
+    * Delete the generated `<name>.env.sample` file (can be added with `mix freebsd.render conf`)
     * Adapt `config/runtime.exs` to work without environment variables
 
 ```elixir
@@ -140,7 +158,7 @@ Install FreeBSD package:
 
 By default the service is run as an unprivileged user created based on the app name.
 
-  * Modify `project()` in `mix.exs` to add `freebsd_pkg: []`
+  * Modify `project` in `mix.exs` to add `freebsd_pkg: []`
   * Add `user` under `freebsd_pkg`
   * Group with the same name as user is automatically created
 
@@ -163,17 +181,17 @@ By default the service is run as an unprivileged user created based on the app n
 
 You can use built-in extra commands available via `service` on FreeBSD, or create your own.
 
-  * Run `mix freebsd.command list` to see available extra commands
-
 Available extra commands for service:
 
   * `init` - Generates secret_key_base and self-signed keys to enable https
 
 To use a built-in extra command:
 
-  * Run `mix freebsd.command use init` to create the template file at `priv/freebsd/service_init.sh.eex`
-  * Modify `project()` in `mix.exs` to add `freebsd_pkg: []`
+  * Modify `project` in `mix.exs` to add `freebsd_pkg: []`
   * Add `service_commands` under `freebsd_pkg`.
+  * Add `init` under `service_commands`
+  * Run `mix freebsd.render service_commands`
+  * Creates the template file at `priv/freebsd/service_init.sh.eex`
 
 ```elixir
 # mix.exs
@@ -191,19 +209,13 @@ To use a built-in extra command:
 
 To create a custom extra command:
 
-  * Run `mix freebsd.command create <name>`
+  * Add the preferred name to `freebsd_pkg[:service][:service_commands]` as above.
+  * Run `mix freebsd.render service_commands`
 
-Then add it to `freebsd_pkg[:service][:commands]` as above.
 
+### Override service and *-install scripts
 
-### Override service, *-install scripts and configuration
-
-Create a copy of built-in templates to modify them as needed:
-
-  * Run `mix freebsd.template list` to see available templates.
-  * Run `mix freebsd.template use post-install` to create a template in your project at `priv/freebsd/post-install.sh.eex`
-
-Available templates for `mix freebsd.template <name>`:
+Available templates for `mix freebsd.render <name>`:
 
   * `service`
   * `pre-install`
@@ -211,12 +223,12 @@ Available templates for `mix freebsd.template <name>`:
   * `pre-deinstall`
   * `post-deinstall`
 
-Shortcut to customise all templates: `mix freebsd.template all`
+Shortcut to render all above templates: `mix freebsd.render all`
 
 
 ### More metadata
 
-  * Modify `project()` in `mix.exs` to add `freebsd_pkg: []`
+  * Modify `project` in `mix.exs` to add `freebsd_pkg: []`
   * Add the configuration values as needed (all optional)
   * Choose approprite category: https://docs.freebsd.org/en/books/porters-handbook/book/#makefile-categories
 
