@@ -10,6 +10,8 @@
 : ${<%= @name %>_env_file:="<%= @env_file %>"}
 
 name="<%= @name %>"
+<%= @name %>_user="<%= @user %>"
+<%= @name %>_group="<%= @group %>"
 rcvar="<%= @name %>_enable"
 command="<%= @app_dir %>/bin/<%= @name %>"
 pidfile="<%= @run_dir %>/<%= @name %>.pid"
